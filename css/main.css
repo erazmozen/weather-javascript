@@ -1,3 +1,7 @@
+@import url("./colors.css");
+
+/* General */
+
 * {
   margin: 0;
   padding: 0;
@@ -7,10 +11,12 @@ html,
 body {
   position: relative;
   box-sizing: border-box;
+  background-color: var(--bg_h);
 }
 
 input {
   border: none;
+  outline: none;
   border-radius: 8px;
   padding: 0.7rem;
 }
@@ -20,12 +26,15 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: "Exo 2", sans-serif;
 }
+
+/* Input */
 
 .input-wrapper {
   position: relative;
   width: 100%;
-  background-color: red;
+  background-color: var(--orange-dim);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,9 +45,14 @@ input {
   width: 80%;
 }
 
+/* Autocomplete */
+
 .autocomplete-wrapper {
-  padding: 0.6rem 0;
-  background-color: gray;
+  padding: 1rem 0;
+  background-color: var(--bg);
+  color: var(--fg_h);
+  font-weight: bold;
+  font-size: 1.13em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,13 +60,17 @@ input {
 }
 
 .autocomplete-wrapper > * {
-  margin: 0.3rem;
+  margin: 0.1rem;
+  padding: 0.6rem;
 }
 
 .autocomplete-wrapper > *:hover {
-  background-color: green;
+  background-color: var(--orange-dim);
+  border-radius: 8px;
   cursor: pointer;
 }
+
+/* Weather */
 
 .weather-wrapper {
   width: 100%;
@@ -60,19 +78,26 @@ input {
 
 .weather {
   padding: 1rem;
-  background-color: lightgrey;
+  background-color: var(--bg);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .weather > div {
-  background-color: grey;
+  background-color: var(--orange-dim);
   margin: 0.3rem;
-  padding: 0.4rem;
+  padding: 0.6rem 0.3rem;
+  border-radius: 8px;
+  color: var(--fg_h);
+  font-weight: bold;
   width: 80px;
 }
 
 .weather p {
   text-align: center;
+}
+
+.weather h2 {
+  color: var(--fg_h);
 }
