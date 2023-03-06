@@ -17,6 +17,8 @@ const weather = {
           data.results[0].latitude,
           data.results[0].longitude
         );
+
+        this.showCity(data);
       });
   },
   fetchWeather: async function (lat, long) {
@@ -27,6 +29,25 @@ const weather = {
       .then((data) => {
         console.log(data);
       });
+  },
+  showCity: function (data) {
+    let results = data.results;
+    const autocompleteWrapper = document.querySelector(
+      ".autocomplete-wrapper"
+    );
+
+    autocompleteWrapper.innerHTML = results
+      .map((res) => {
+        return `
+          <div
+            id="${res.id}"
+            onclick="weather.fetchWeather(${res.latitude}, ${res.longitude})">
+            ${res.name} / ${res.admin1}
+          </div>
+      `;
+      })
+      .join("");
+    console.log(data.results);
   },
 };
 
