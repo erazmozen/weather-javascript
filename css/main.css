@@ -8,3 +8,14 @@ body {
   position: relative;
   box-sizing: border-box;
 }
+
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+#root input {
+  width: 70%;
+  margin: 1rem;
+  padding: 0.4rem;
+}
