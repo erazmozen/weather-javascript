@@ -21,6 +21,11 @@ input {
   padding: 0.7rem;
 }
 
+.active {
+  background-color: var(--orange-dim);
+  border-radius: 8px;
+}
+
 #root {
   position: relative;
   display: flex;

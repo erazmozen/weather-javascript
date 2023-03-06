@@ -32,6 +32,7 @@ const weather = {
   },
   showCity: function (data) {
     let results = data.results;
+
     const autocompleteWrapper = document.querySelector(
       ".autocomplete-wrapper"
     );
@@ -41,12 +42,36 @@ const weather = {
         return `
           <div
             id="${res.id}"
+            class="city-item"
             onclick="weather.fetchWeather(${res.latitude}, ${res.longitude})">
-            ${res.name} / ${res.admin1}
+            <p>${res.name} / ${res.admin1}</p>
           </div>
       `;
       })
       .join("");
+
+    const cityItems = Array.prototype.slice.call(
+      document.querySelectorAll(".city-item")
+    );
+
+    cityItems[0].classList.add("active");
+
+    for (let i = 0; i < cityItems.length; i++) {
+      cityItems[i].addEventListener("click", function () {
+        let current =
+          document.getElementsByClassName("active");
+
+        console.log("CityItems", cityItems);
+
+        current[0].className = current[0].className.replace(
+          " active",
+          ""
+        );
+
+        this.className += " active";
+      });
+    }
+
     console.log("+ Render city");
   },
 
