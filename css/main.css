@@ -9,6 +9,12 @@ body {
   box-sizing: border-box;
 }
 
+input {
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem;
+}
+
 #root {
   position: relative;
   display: flex;
@@ -17,6 +23,7 @@ body {
 }
 
 .input-wrapper {
+  position: relative;
   width: 100%;
   background-color: red;
   display: flex;
@@ -27,7 +34,6 @@ body {
 .input-wrapper input {
   margin: 1rem 0;
   width: 80%;
-  padding: 0.4rem;
 }
 
 .autocomplete-wrapper {
