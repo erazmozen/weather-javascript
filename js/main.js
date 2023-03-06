@@ -28,6 +28,7 @@ const weather = {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        this.showWeather(data);
       });
   },
   showCity: function (data) {
@@ -48,6 +49,44 @@ const weather = {
       })
       .join("");
     console.log(data.results);
+  },
+
+  showWeather: function (data) {
+    const now = new Date().getHours();
+    const nToShow = 12;
+    const tempByHour = data.hourly.temperature_2m;
+    const timeByHour = data.hourly.time;
+    const unit = data.hourly_units.temperature_2m;
+    const worker = {
+      temp: tempByHour.slice(now, now + nToShow),
+      time: timeByHour.slice(now, now + nToShow),
+      useWorker: function () {
+        let segments = [];
+        for (let i = 0; i < nToShow; i++) {
+          let segment = {
+            segmentTemp: this.temp[i] + unit,
+            segmentTime: this.time[i].slice(-5),
+          };
+          segments.push(segment);
+          console.log("For loop:", i, "Segment:", segment);
+        }
+        console.log("PRINT", segments);
+        return segments;
+      },
+    };
+
+    const showWeather = document.querySelector(".weather");
+    showWeather.innerHTML = worker
+      .useWorker()
+      .map(
+        (segment) => `
+          <div>
+            <p>${segment.segmentTemp}</p>
+            <p>${segment.segmentTime}</p>
+          </div>
+          `
+      )
+      .join("");
   },
 };
 
