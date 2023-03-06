@@ -14,8 +14,33 @@ body {
   justify-content: center;
 }
 
-#root input {
-  width: 70%;
-  margin: 1rem;
+.input-wrapper {
+  background-color: red;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-wrapper input {
+  margin: 1rem 0;
+  width: 80%;
   padding: 0.4rem;
+}
+
+.autocomplete-wrapper {
+  padding: 0.6rem 0;
+  background-color: gray;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.autocomplete-wrapper > * {
+  margin: 0.3rem;
+}
+
+.autocomplete-wrapper > *:hover {
+  background-color: green;
+  cursor: pointer;
 }
