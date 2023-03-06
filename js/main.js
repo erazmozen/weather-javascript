@@ -34,5 +34,20 @@ const cityInput = document.getElementById("city-input");
 cityInput.addEventListener("input", (e) => {
   console.log(e.target.value);
   if (e.target.value.length < 3) return;
-  weather.fetchCity(e.target.value);
+  updateDebounce(e.target.value);
 });
+
+const updateDebounce = debounce((arg) => {
+  weather.fetchCity(arg);
+});
+
+function debounce(callback, delay = 600) {
+  let timeout;
+
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+}
