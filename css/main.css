@@ -77,19 +77,14 @@ input {
 
 /* Weather */
 
-.weather-wrapper {
-  width: 100%;
-}
-
 .weather {
   padding: 1rem;
   background-color: var(--bg);
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
 }
 
-.weather > div {
+.weather-body > div {
   background-color: var(--orange-dim);
   margin: 0.3rem;
   padding: 0.6rem 0.3rem;
@@ -97,6 +92,17 @@ input {
   color: var(--fg_h);
   font-weight: bold;
   width: 80px;
+}
+
+.weather-header {
+  color: var(--fg_h);
+  margin: 1rem;
+}
+
+.weather-body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .weather p {

@@ -61,14 +61,14 @@ const weather = {
         let current =
           document.getElementsByClassName("active");
 
-        console.log("CityItems", cityItems);
-
         current[0].className = current[0].className.replace(
           " active",
           ""
         );
 
         this.className += " active";
+
+        console.log("CityItems", cityItems);
       });
     }
 
@@ -103,17 +103,23 @@ const weather = {
       },
     };
 
-    showWeather.innerHTML = worker
-      .useWorker()
-      .map(
-        (segment) => `
-          <div>
-            <p>${segment.segmentTemp}</p>
-            <p>${segment.segmentTime}</p>
-          </div>
-          `
-      )
-      .join("");
+    showWeather.innerHTML = ` 
+      <div class="weather-header" >
+        <h3>It's currently ${worker.temp[0]}${unit}</h3>
+      </div>
+      <div class="weather-body" >
+        ${worker
+          .useWorker()
+          .map(
+            (segment) => `
+              <div>
+                <p>${segment.segmentTemp}</p>
+                <p>${segment.segmentTime}</p>
+              </div>`
+          )
+          .join("")}
+      </div>
+     `;
 
     console.log("+ Render weather");
   },
