@@ -10,6 +10,22 @@ const weather = {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        if (!data.results) {
+          return console.log("no city forund");
+        }
+        this.fetchWeather(
+          data.results[0].latitude,
+          data.results[0].longitude
+        );
+      });
+  },
+  fetchWeather: async function (lat, long) {
+    await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
       });
   },
 };
