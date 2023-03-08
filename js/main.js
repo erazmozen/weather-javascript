@@ -76,21 +76,27 @@ const weather = {
   },
 
   showWeather: function (data) {
-    const now = new Date().getHours();
-    const nToShow = 12;
+    const HOURSTOSHOW = 12;
 
     const showWeather = document.querySelector(".weather");
+    const currentHour = new Date().getHours();
 
     const tempByHour = data.hourly.temperature_2m;
     const timeByHour = data.hourly.time;
     const unit = data.hourly_units.temperature_2m;
 
     const worker = {
-      temp: tempByHour.slice(now, now + nToShow),
-      time: timeByHour.slice(now, now + nToShow),
+      temp: tempByHour.slice(
+        currentHour,
+        currentHour + HOURSTOSHOW
+      ),
+      time: timeByHour.slice(
+        currentHour,
+        currentHour + HOURSTOSHOW
+      ),
       useWorker: function () {
         let segments = [];
-        for (let i = 0; i < nToShow; i++) {
+        for (let i = 0; i < HOURSTOSHOW; i++) {
           let segment = {
             segmentTemp: this.temp[i] + unit,
             segmentTime: this.time[i].slice(-5),
@@ -101,25 +107,27 @@ const weather = {
         console.log("Returning segments:", segments);
         return segments;
       },
+      showWorker: function () {
+        return ` 
+        <div class="weather-header" >
+          <h3>It's currently ${this.temp[0]}${unit}</h3>
+        </div>
+        <div class="weather-body" >
+          ${this.useWorker()
+            .map(
+              (segment) => `
+                <div>
+                  <p>${segment.segmentTemp}</p>
+                  <p>${segment.segmentTime}</p>
+                </div>`
+            )
+            .join("")}
+        </div>
+      `;
+      },
     };
 
-    showWeather.innerHTML = ` 
-      <div class="weather-header" >
-        <h3>It's currently ${worker.temp[0]}${unit}</h3>
-      </div>
-      <div class="weather-body" >
-        ${worker
-          .useWorker()
-          .map(
-            (segment) => `
-              <div>
-                <p>${segment.segmentTemp}</p>
-                <p>${segment.segmentTime}</p>
-              </div>`
-          )
-          .join("")}
-      </div>
-     `;
+    showWeather.innerHTML = worker.showWorker();
 
     console.log("+ Render weather");
   },
