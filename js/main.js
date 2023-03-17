@@ -1,49 +1,48 @@
 const weather = {
   fetchCity: async function (city) {
-    await fetch(
+    const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetch city data:", data);
+    );
+    const cityData = await response.json();
+    console.log("Fetched cityData", cityData);
 
-        if (!data.results) {
-          return console.log("no city forund");
-        }
+    if (!cityData.results) {
+      return console.log("no city forund");
+    }
 
-        this.fetchWeather(
-          data.results[0].latitude,
-          data.results[0].longitude
-        );
+    console.log("Starting fetchWeather from fetchCity");
+    this.fetchWeather(
+      cityData.results[0].latitude,
+      cityData.results[0].longitude
+    );
 
-        this.showCity(data);
-      });
+    console.log("Starting showCity from fetchCity");
+    this.showCity(cityData);
   },
-  fetchWeather: async function (lat, long) {
-    await fetch(
+
+  fetchWeather: function (lat, long) {
+    fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
     )
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetch weather data:", data);
-
-        this.showWeather(data);
+      .then((weatherData) => {
+        console.log("Fetched weatherData:", weatherData);
+        console.log("Calling showWeather");
+        this.showWeather(weatherData);
       });
   },
+
   showCity: function (data) {
-    let results = data.results;
-
-    const autocompleteWrapper = document.querySelector(
+    document.querySelector(
       ".autocomplete-wrapper"
-    );
-
-    autocompleteWrapper.innerHTML = results
+    ).innerHTML = data.results
       .map((res) => {
         return `
           <div
             id="${res.id}"
             class="city-item"
-            onclick="weather.fetchWeather(${res.latitude}, ${res.longitude})">
+            data-lat=${res.latitude}
+            data-long=${res.longitude}
             <p>${res.name} / ${res.admin1}</p>
           </div>
       `;
@@ -53,26 +52,28 @@ const weather = {
     const cityItems = Array.prototype.slice.call(
       document.querySelectorAll(".city-item")
     );
-
     cityItems[0].classList.add("active");
 
     for (let i = 0; i < cityItems.length; i++) {
       cityItems[i].addEventListener("click", function () {
+        console.log("Calling fetchWeater from showCity");
+        weather.fetchWeather(
+          this.dataset.lat,
+          this.dataset.long
+        );
+
         let current =
           document.getElementsByClassName("active");
-
         current[0].className = current[0].className.replace(
           " active",
           ""
         );
 
         this.className += " active";
-
-        console.log("CityItems", cityItems);
       });
     }
 
-    console.log("+ Render city");
+    console.log("+ Render city list");
   },
 
   showWeather: function (data) {
@@ -95,6 +96,7 @@ const weather = {
         currentHour + HOURSTOSHOW
       ),
       useWorker: function () {
+        console.log("Assembling segments");
         let segments = [];
         for (let i = 0; i < HOURSTOSHOW; i++) {
           let segment = {
@@ -107,9 +109,11 @@ const weather = {
         console.log("Returning segments:", segments);
         return segments;
       },
+
       showWorker: function () {
+        console.log("Rendering segmetns");
         return ` 
-        <div class="weather-header" >
+        <div class="weather-header">
           <h3>It's currently ${this.temp[0]}${unit}</h3>
         </div>
         <div class="weather-body" >
@@ -135,15 +139,6 @@ const weather = {
 
 const cityInput = document.getElementById("city-input");
 
-cityInput.addEventListener("input", (e) => {
-  if (e.target.value.length < 3)
-    return console.log("Name too short");
-
-  console.log("Passing input..", e.target.value);
-
-  updateDebounce(e.target.value);
-});
-
 const updateDebounce = debounce((arg) => {
   weather.fetchCity(arg);
 });
@@ -162,3 +157,12 @@ function debounce(callback, delay = 600) {
     }, delay);
   };
 }
+
+cityInput.addEventListener("input", (e) => {
+  if (e.target.value.length < 3)
+    return console.log("Name too short");
+
+  console.log("Passing input..", e.target.value);
+
+  updateDebounce(e.target.value);
+});
