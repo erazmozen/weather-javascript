@@ -1,22 +1,23 @@
+const slider = document.getElementById("days-slider");
+const output = document.getElementById("days-output");
+const cityInput = document.getElementById("city-input");
+
 const weather = {
   fetchCity: async function (city) {
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
     );
     const cityData = await response.json();
-    console.log("Fetched cityData", cityData);
 
     if (!cityData.results) {
       return console.log("no city forund");
     }
 
-    console.log("Starting fetchWeather from fetchCity");
     this.fetchWeather(
       cityData.results[0].latitude,
       cityData.results[0].longitude
     );
 
-    console.log("Starting showCity from fetchCity");
     this.showCity(cityData);
   },
 
@@ -27,7 +28,6 @@ const weather = {
       .then((res) => res.json())
       .then((weatherData) => {
         console.log("Fetched weatherData:", weatherData);
-        console.log("Calling showWeather");
         this.showWeather(weatherData);
       });
   },
@@ -43,6 +43,7 @@ const weather = {
             class="city-item"
             data-lat=${res.latitude}
             data-long=${res.longitude}
+          >
             <p>${res.name} / ${res.admin1}</p>
           </div>
       `;
@@ -56,7 +57,6 @@ const weather = {
 
     for (let i = 0; i < cityItems.length; i++) {
       cityItems[i].addEventListener("click", function () {
-        console.log("Calling fetchWeater from showCity");
         weather.fetchWeather(
           this.dataset.lat,
           this.dataset.long
@@ -77,30 +77,18 @@ const weather = {
   },
 
   showWeather: function (data) {
-    const HOURSTOSHOW = 12;
-
-    const showWeather = document.querySelector(".weather");
-    const currentHour = new Date().getHours();
-
-    const tempByHour = data.hourly.temperature_2m;
-    const timeByHour = data.hourly.time;
-    const unit = data.hourly_units.temperature_2m;
+    const weatherDiv = document.querySelector(".weather");
 
     const worker = {
-      temp: tempByHour.slice(
-        currentHour,
-        currentHour + HOURSTOSHOW
-      ),
-      time: timeByHour.slice(
-        currentHour,
-        currentHour + HOURSTOSHOW
-      ),
+      unit: data.hourly_units.temperature_2m,
+      temp: data.hourly.temperature_2m,
+      time: data.hourly.time,
+
       useWorker: function () {
-        console.log("Assembling segments");
         let segments = [];
-        for (let i = 0; i < HOURSTOSHOW; i++) {
+        for (let i = 0; i < slider.value; i++) {
           let segment = {
-            segmentTemp: this.temp[i] + unit,
+            segmentTemp: this.temp[i] + this.unit,
             segmentTime: this.time[i].slice(-5),
           };
           segments.push(segment);
@@ -114,9 +102,11 @@ const weather = {
         console.log("Rendering segmetns");
         return ` 
         <div class="weather-header">
-          <h3>It's currently ${this.temp[0]}${unit}</h3>
+          <h3>It's currently ${this.temp[0]}${
+          this.unit
+        }</h3>
         </div>
-        <div class="weather-body" >
+        <div class="weather-body">
           ${this.useWorker()
             .map(
               (segment) => `
@@ -131,13 +121,19 @@ const weather = {
       },
     };
 
-    showWeather.innerHTML = worker.showWorker();
+    weatherDiv.innerHTML = worker.showWorker();
+
+    slider.oninput = function () {
+      weatherDiv.innerHTML = worker.showWorker();
+      output.innerHTML = slider.value;
+    };
 
     console.log("+ Render weather");
   },
 };
 
-const cityInput = document.getElementById("city-input");
+output.innerHTML = slider.value;
+slider.oninput = () => (output.innerHTML = slider.value);
 
 const updateDebounce = debounce((arg) => {
   weather.fetchCity(arg);
@@ -145,12 +141,9 @@ const updateDebounce = debounce((arg) => {
 
 function debounce(callback, delay = 600) {
   let timeout;
-
   return (...args) => {
     console.log("Debounceing..");
-
     clearTimeout(timeout);
-
     timeout = setTimeout(() => {
       callback(...args);
       console.log("Debounce END");
@@ -158,11 +151,8 @@ function debounce(callback, delay = 600) {
   };
 }
 
-cityInput.addEventListener("input", (e) => {
-  if (e.target.value.length < 3)
-    return console.log("Name too short");
-
-  console.log("Passing input..", e.target.value);
-
-  updateDebounce(e.target.value);
-});
+cityInput.addEventListener("input", (e) =>
+  e.target.value.length < 3
+    ? console.log("Name too short")
+    : updateDebounce(e.target.value)
+);

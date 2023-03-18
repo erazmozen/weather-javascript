@@ -14,6 +14,13 @@ body {
   background-color: var(--bg_h);
 }
 
+body {
+  height: 100dvh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
 input {
   border: none;
   outline: none;
@@ -32,28 +39,43 @@ input {
   flex-direction: column;
   align-items: center;
   font-family: "Exo 2", sans-serif;
+  padding: 1rem 3rem;
+}
+
+#root > * {
+  width: 100%;
+  max-width: 840px;
+}
+
+.header {
+  color: var(--fg_h);
+  background-color: var(--orange-dim);
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header i {
+  font-size: 2rem;
 }
 
 /* Input */
 
 .input-wrapper {
   position: relative;
-  width: 100%;
   background-color: var(--orange-dim);
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.input-wrapper input {
   margin-top: 1rem;
-  width: 80%;
+  border-radius: 8px;
+  padding: 1rem 0;
 }
 
 /* Autocomplete */
 
 .autocomplete-wrapper {
-  padding: 1rem 0;
   background-color: var(--bg);
   color: var(--fg_h);
   font-weight: bold;
@@ -61,7 +83,7 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  border-radius: 8px;
 }
 
 .autocomplete-wrapper > * {
@@ -75,19 +97,32 @@ input {
   cursor: pointer;
 }
 
+.autocomplete-wrapper div:first-child {
+  margin-top: 1rem;
+}
+
+.autocomplete-wrapper div:last-child {
+  margin-bottom: 1rem;
+}
+
 /* Weather */
+
+.weather-wrapper {
+  background-color: var(--bg);
+  border-radius: 0 0 8px 8px;
+}
 
 .weather {
   padding: 1rem;
-  margin: 1rem;
+  margin-top: 1rem;
   border-radius: 8px;
-  background-color: var(--bg);
+  background-color: var(--orange-dim);
   display: flex;
   flex-direction: column;
 }
 
 .weather-body > div {
-  background-color: var(--orange-dim);
+  background-color: var(--bg);
   margin: 0.3rem;
   padding: 0.6rem 0.3rem;
   border-radius: 8px;
@@ -113,4 +148,49 @@ input {
 
 .weather h2 {
   color: var(--fg_h);
+}
+
+.slider-wrapper {
+  position: relative;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  color: var(--fg_h);
+}
+
+.slider-wrapper h2 {
+  background: var(--bg);
+  border-radius: 8px;
+  margin-left: 0.4rem;
+  height: 100%;
+  display: flex;
+
+  padding: 0.3rem 0.8rem;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  background: none;
+  background: white;
+  margin: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  outline: none;
+  background: #04aa6d;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: var(--orange-dim);
+  cursor: pointer;
 }

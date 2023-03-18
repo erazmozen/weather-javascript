@@ -23,9 +23,19 @@
     />
     <link rel="stylesheet" href="./css/main.css" />
     <script defer src="./js/main.js"></script>
+    <script
+      async
+      src="https://kit.fontawesome.com/86fa7ea8df.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <main id="root">
+      <div class="header">
+        <h2>Weather app</h2>
+        <i class="fab fa-github"></i>
+      </div>
+
       <div class="input-wrapper">
         <input
           id="city-input"
@@ -35,12 +45,24 @@
           autocomplete="off"
         />
 
-        <div class="weather-wrapper">
-          <div class="weather">
-            <h2>Type in the search bar to start</h2>
+        <div class="slider-wrapper">
+          <input
+            id="days-slider"
+            type="range"
+            min="3"
+            max="16"
+            name="days-slider"
+          />
+          <div>
+            <h2 id="days-output"></h2>
           </div>
         </div>
+      </div>
 
+      <div class="weather-wrapper">
+        <div class="weather">
+          <h2>Type in the search bar to start</h2>
+        </div>
         <div class="autocomplete-wrapper"></div>
       </div>
     </main>
