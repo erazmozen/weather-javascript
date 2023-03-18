@@ -4,13 +4,16 @@ const cityInput = document.getElementById("city-input");
 
 const weather = {
   fetchCity: async function (city) {
+    if (city.length < 3)
+      return console.log("Name too short");
+
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
     );
     const cityData = await response.json();
 
     if (!cityData.results) {
-      return console.log("no city forund");
+      return console.log("No city forund");
     }
 
     this.fetchWeather(
@@ -152,7 +155,5 @@ function debounce(callback, delay = 600) {
 }
 
 cityInput.addEventListener("input", (e) =>
-  e.target.value.length < 3
-    ? console.log("Name too short")
-    : updateDebounce(e.target.value)
+  updateDebounce(e.target.value)
 );
