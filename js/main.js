@@ -1,11 +1,14 @@
 const slider = document.getElementById("days-slider");
 const output = document.getElementById("days-output");
 const cityInput = document.getElementById("city-input");
+const statusText = document.getElementById("status");
 
 const weather = {
   fetchCity: async function (city) {
-    if (city.length < 3)
+    if (city.length < 3) {
+      statusText.innerHTML = "Name too short";
       return console.log("Name too short");
+    }
 
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
@@ -13,6 +16,7 @@ const weather = {
     const cityData = await response.json();
 
     if (!cityData.results) {
+      statusText.innerHTML = "No city found";
       return console.log("No city forund");
     }
 
@@ -157,3 +161,5 @@ function debounce(callback, delay = 600) {
 cityInput.addEventListener("input", (e) =>
   updateDebounce(e.target.value)
 );
+
+console.log("file ended");
