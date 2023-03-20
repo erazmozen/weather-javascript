@@ -15,10 +15,11 @@ body {
 }
 
 body {
-  height: 100dvh;
+  /* height: 100dvh; */
   width: 100vw;
   display: flex;
   justify-content: center;
+  padding-bottom: 2rem;
 }
 
 input {
