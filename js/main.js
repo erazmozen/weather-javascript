@@ -24,14 +24,14 @@ const weather = {
     this.fetchWeather(
       cityData.results[0].latitude,
       cityData.results[0].longitude,
-      city
+      cityData.results[0].id
     );
 
     this.showCity(cityData);
   },
 
-  fetchWeather: function (lat, long, city) {
-    const localData = getFromLocal(city.toLowerCase());
+  fetchWeather: function (lat, long, id) {
+    const localData = getFromLocal(id);
     if (!localData) {
       fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
@@ -39,7 +39,7 @@ const weather = {
         .then((res) => res.json())
         .then((weatherData) => {
           console.log("Fetched weatherData:", weatherData);
-          saveToLocal(city, weatherData);
+          saveToLocal(id, weatherData);
           this.showWeather(weatherData);
         });
     } else {
@@ -59,6 +59,7 @@ const weather = {
             class="city-item"
             data-lat=${res.latitude}
             data-long=${res.longitude}
+            data-name=${res.name.toLowerCase()}
           >
             <p>${res.name} / ${res.admin1}</p>
           </div>
@@ -73,9 +74,11 @@ const weather = {
 
     for (let i = 0; i < cityItems.length; i++) {
       cityItems[i].addEventListener("click", function () {
+        console.log("++++++++");
         weather.fetchWeather(
           this.dataset.lat,
-          this.dataset.long
+          this.dataset.long,
+          this.id
         );
 
         let current =
@@ -174,10 +177,7 @@ cityInput.addEventListener("input", (e) =>
 function saveToLocal(key, value) {
   const valueToSave = { ...value, timeSaved: Date.now() };
   console.log("Save to local ", value, key);
-  localStorage.setItem(
-    key.toLowerCase(),
-    JSON.stringify(valueToSave)
-  );
+  localStorage.setItem(key, JSON.stringify(valueToSave));
 }
 
 function getFromLocal(key) {
