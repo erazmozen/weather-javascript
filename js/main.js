@@ -5,10 +5,8 @@ const statusText = document.getElementById("status");
 
 const weather = {
   fetchCity: async function (city) {
-    if (city.length < 3) {
-      statusText.innerHTML = "Name too short";
-      return console.log("Name too short");
-    }
+    if (city.length < 3)
+      return (statusText.innerHTML = "Name too short");
 
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
@@ -16,10 +14,8 @@ const weather = {
     const cityData = await response.json();
     console.log("Fetched CityData:", cityData);
 
-    if (!cityData.results) {
-      statusText.innerHTML = "No city found";
-      return console.log("No city forund");
-    }
+    if (!cityData.results)
+      return (statusText.innerHTML = "No city found");
 
     this.fetchWeather(
       cityData.results[0].latitude,
@@ -43,7 +39,7 @@ const weather = {
           this.showWeather(weatherData);
         });
     } else {
-      console.log("RUNNING FROM LOCAL");
+      console.log("Getting from localStorage");
       this.showWeather(localData);
     }
   },
@@ -59,7 +55,6 @@ const weather = {
             class="city-item"
             data-lat=${res.latitude}
             data-long=${res.longitude}
-            data-name=${res.name.toLowerCase()}
           >
             <p>${res.name} / ${res.admin1}</p>
           </div>
@@ -74,7 +69,6 @@ const weather = {
 
     for (let i = 0; i < cityItems.length; i++) {
       cityItems[i].addEventListener("click", function () {
-        console.log("++++++++");
         weather.fetchWeather(
           this.dataset.lat,
           this.dataset.long,
@@ -87,7 +81,6 @@ const weather = {
           " active",
           ""
         );
-
         this.className += " active";
       });
     }
@@ -111,7 +104,6 @@ const weather = {
             segmentTime: this.time[i].slice(-5),
           };
           segments.push(segment);
-          // console.log("For loop:", i, "Segment:", segment);
         }
         console.log("Returning segments:", segments);
         return segments;
@@ -176,13 +168,13 @@ cityInput.addEventListener("input", (e) =>
 
 function saveToLocal(key, value) {
   const valueToSave = { ...value, timeSaved: Date.now() };
-  console.log("Save to local ", value, key);
   localStorage.setItem(key, JSON.stringify(valueToSave));
+  console.log("Saved to local ", value, key);
 }
 
 function getFromLocal(key) {
-  const fromLocal = localStorage.getItem(key);
-  return JSON.parse(fromLocal);
+  const fromLocal = JSON.parse(localStorage.getItem(key));
+  return fromLocal;
 }
 
 console.log("file ended");
