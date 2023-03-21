@@ -14,6 +14,7 @@ const weather = {
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
     );
     const cityData = await response.json();
+    console.log("Fetched CityData:", cityData);
 
     if (!cityData.results) {
       statusText.innerHTML = "No city found";
@@ -22,21 +23,29 @@ const weather = {
 
     this.fetchWeather(
       cityData.results[0].latitude,
-      cityData.results[0].longitude
+      cityData.results[0].longitude,
+      city
     );
 
     this.showCity(cityData);
   },
 
-  fetchWeather: function (lat, long) {
-    fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
-    )
-      .then((res) => res.json())
-      .then((weatherData) => {
-        console.log("Fetched weatherData:", weatherData);
-        this.showWeather(weatherData);
-      });
+  fetchWeather: function (lat, long, city) {
+    const localData = getFromLocal(city.toLowerCase());
+    if (!localData) {
+      fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
+      )
+        .then((res) => res.json())
+        .then((weatherData) => {
+          console.log("Fetched weatherData:", weatherData);
+          saveToLocal(city, weatherData);
+          this.showWeather(weatherData);
+        });
+    } else {
+      console.log("RUNNING FROM LOCAL");
+      this.showWeather(localData);
+    }
   },
 
   showCity: function (data) {
@@ -161,5 +170,19 @@ function debounce(callback, delay = 600) {
 cityInput.addEventListener("input", (e) =>
   updateDebounce(e.target.value)
 );
+
+function saveToLocal(key, value) {
+  const valueToSave = { ...value, timeSaved: Date.now() };
+  console.log("Save to local ", value, key);
+  localStorage.setItem(
+    key.toLowerCase(),
+    JSON.stringify(valueToSave)
+  );
+}
+
+function getFromLocal(key) {
+  const fromLocal = localStorage.getItem(key);
+  return JSON.parse(fromLocal);
+}
 
 console.log("file ended");
