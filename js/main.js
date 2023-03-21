@@ -17,7 +17,7 @@ const weather = {
     if (!cityData.results)
       return (statusText.innerHTML = "No city found");
 
-    this.fetchWeather(
+    this.checkLocalStorage(
       cityData.results[0].latitude,
       cityData.results[0].longitude,
       cityData.results[0].id
@@ -27,18 +27,22 @@ const weather = {
   },
 
   fetchWeather: function (lat, long, id) {
+    fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
+    )
+      .then((res) => res.json())
+      .then((weatherData) => {
+        console.log("Fetched weatherData:", weatherData);
+        saveToLocal(id, weatherData);
+        this.showWeather(weatherData);
+      });
+  },
+
+  checkLocalStorage: function (lat, long, id) {
     const localData = getFromLocal(id);
     if (!localData) {
       console.log("No data in local storage for id: ", id);
-      fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
-      )
-        .then((res) => res.json())
-        .then((weatherData) => {
-          console.log("Fetched weatherData:", weatherData);
-          saveToLocal(id, weatherData);
-          this.showWeather(weatherData);
-        });
+      this.fetchWeather(lat, long, id);
     } else {
       if (localData.timeSaved + 10000 > Date.now()) {
         console.log(
@@ -48,18 +52,7 @@ const weather = {
         this.showWeather(localData);
       } else {
         console.log("Getting from API for id: ", id);
-        fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
-        )
-          .then((res) => res.json())
-          .then((weatherData) => {
-            console.log(
-              "Fetched weatherData:",
-              weatherData
-            );
-            saveToLocal(id, weatherData);
-            this.showWeather(weatherData);
-          });
+        this.fetchWeather(lat, long, id);
       }
     }
   },
@@ -89,7 +82,7 @@ const weather = {
 
     for (let i = 0; i < cityItems.length; i++) {
       cityItems[i].addEventListener("click", function () {
-        weather.fetchWeather(
+        weather.checkLocalStorage(
           this.dataset.lat,
           this.dataset.long,
           this.id
