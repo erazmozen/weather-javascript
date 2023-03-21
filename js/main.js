@@ -29,6 +29,7 @@ const weather = {
   fetchWeather: function (lat, long, id) {
     const localData = getFromLocal(id);
     if (!localData) {
+      console.log("No data in local storage for id: ", id);
       fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
       )
@@ -39,8 +40,27 @@ const weather = {
           this.showWeather(weatherData);
         });
     } else {
-      console.log("Getting from localStorage");
-      this.showWeather(localData);
+      if (localData.timeSaved + 10000 > Date.now()) {
+        console.log(
+          "Getting from localStorage for id: ",
+          id
+        );
+        this.showWeather(localData);
+      } else {
+        console.log("Getting from API for id: ", id);
+        fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
+        )
+          .then((res) => res.json())
+          .then((weatherData) => {
+            console.log(
+              "Fetched weatherData:",
+              weatherData
+            );
+            saveToLocal(id, weatherData);
+            this.showWeather(weatherData);
+          });
+      }
     }
   },
 
