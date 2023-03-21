@@ -97,6 +97,7 @@ input {
 
 input[type="range"] {
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   outline: none;
   background: none;
@@ -106,20 +107,26 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   width: 25px;
+  height: 25px;
   outline: none;
-  background: #04aa6d;
+  background: var(--orange-dim);
+  border-radius: 8px;
   cursor: pointer;
 }
 
 input[type="range"]::-moz-range-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
   width: 25px;
   height: 25px;
   background: var(--orange-dim);
+  outline: none;
   cursor: pointer;
+  border-radius: 8px;
 }
 
 /* Autocomplete */
