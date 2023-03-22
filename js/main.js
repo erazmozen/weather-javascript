@@ -12,7 +12,7 @@ const weather = {
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
     );
     const cityData = await response.json();
-    console.log("Fetched CityData:", cityData);
+    log("Fetched CityData:", cityData);
 
     if (!cityData.results)
       return (statusText.innerHTML = "No city found");
@@ -26,13 +26,14 @@ const weather = {
     this.showCity(cityData);
   },
 
-  fetchWeather: function (lat, long, id) {
+  fetchWeather: function (...args) {
+    const [lat, long, id] = args;
     fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m`
     )
       .then((res) => res.json())
       .then((weatherData) => {
-        console.log("Fetched weatherData:", weatherData);
+        log("Fetched weatherData: ", weatherData);
         saveToLocal(id, weatherData);
         this.showWeather(weatherData);
       });
@@ -41,26 +42,24 @@ const weather = {
   checkLocalStorage: function (lat, long, id) {
     const localData = getFromLocal(id);
     if (!localData) {
-      console.log("No data in local storage for id: ", id);
+      log("No data in local storage for id: ", id);
       this.fetchWeather(lat, long, id);
     } else {
-      if (localData.timeSaved + 10000 > Date.now()) {
-        console.log(
-          "Getting from localStorage for id: ",
-          id
-        );
+      if (localData.timeSaved + 240000 > Date.now()) {
+        log("Getting from localStorage for id: ", id);
         this.showWeather(localData);
       } else {
-        console.log("Getting from API for id: ", id);
+        log("Getting from API for id: ", id);
         this.fetchWeather(lat, long, id);
       }
     }
   },
 
   showCity: function (data) {
-    document.querySelector(
+    const autocompDiv = document.querySelector(
       ".autocomplete-wrapper"
-    ).innerHTML = data.results
+    );
+    autocompDiv.innerHTML = data.results
       .map((res) => {
         return `
           <div
@@ -98,7 +97,7 @@ const weather = {
       });
     }
 
-    console.log("+ Render city list");
+    log("+ Render city list");
   },
 
   showWeather: function (data) {
@@ -118,12 +117,12 @@ const weather = {
           };
           segments.push(segment);
         }
-        console.log("Returning segments:", segments);
+        log("Returning segments:", segments);
         return segments;
       },
 
       showWorker: function () {
-        console.log("Rendering segmetns");
+        log("Rendering segmetns");
         return ` 
         <div class="weather-header">
           <h3>It's currently ${this.temp[0]}${
@@ -152,7 +151,7 @@ const weather = {
       output.innerHTML = slider.value;
     };
 
-    console.log("+ Render weather");
+    log("+ Render weather");
   },
 };
 
@@ -166,11 +165,11 @@ const updateDebounce = debounce((arg) => {
 function debounce(callback, delay = 600) {
   let timeout;
   return (...args) => {
-    console.log("Debounceing..");
+    log("Debounceing..");
     clearTimeout(timeout);
     timeout = setTimeout(() => {
       callback(...args);
-      console.log("Debounce END");
+      log("Debounce END");
     }, delay);
   };
 }
@@ -180,14 +179,18 @@ cityInput.addEventListener("input", (e) =>
 );
 
 function saveToLocal(key, value) {
+  log("Saveing to local: ", value, key);
   const valueToSave = { ...value, timeSaved: Date.now() };
   localStorage.setItem(key, JSON.stringify(valueToSave));
-  console.log("Saved to local ", value, key);
 }
 
 function getFromLocal(key) {
+  log("Getting from storage with key: ", key);
   const fromLocal = JSON.parse(localStorage.getItem(key));
   return fromLocal;
 }
 
+function log(...args) {
+  console.log(...args);
+}
 console.log("file ended");
