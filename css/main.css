@@ -56,7 +56,7 @@ input {
   color: var(--fg_h);
 }
 
-.header {
+header {
   background-color: var(--orange-dim);
   padding: 1rem;
   border-radius: var(--content-border);
@@ -64,7 +64,7 @@ input {
   justify-content: space-between;
 }
 
-.header i {
+header i {
   font-size: 2em;
 }
 

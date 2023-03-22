@@ -1,12 +1,12 @@
-const slider = document.getElementById("days-slider");
-const output = document.getElementById("days-output");
+const sliderInput = document.getElementById("slider-input");
+const daysOutput = document.getElementById("slider-output");
 const cityInput = document.getElementById("city-input");
-const statusText = document.getElementById("status");
+const cityOutput = document.getElementById("city-output");
 
 const weather = {
   fetchCity: async function (city) {
     if (city.length < 3)
-      return (statusText.innerHTML = "Name too short");
+      return (cityOutput.innerHTML = "Name too short");
 
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}`
@@ -15,7 +15,7 @@ const weather = {
     log("Fetched CityData:", cityData);
 
     if (!cityData.results)
-      return (statusText.innerHTML = "No city found");
+      return (cityOutput.innerHTML = "No city found");
 
     this.checkLocalStorage(
       cityData.results[0].latitude,
@@ -78,16 +78,15 @@ const weather = {
       document.querySelectorAll(".city-item")
     );
     cityItems[0].classList.add("active");
-
-    for (let item of cityItems) {
-      item.addEventListener("click", function () {
+    for (let city of cityItems) {
+      city.addEventListener("click", function () {
         weather.checkLocalStorage(
           this.dataset.lat,
           this.dataset.long,
           this.id
         );
 
-        let current =
+        const current =
           document.getElementsByClassName("active");
         current[0].className = current[0].className.replace(
           " active",
@@ -110,8 +109,8 @@ const weather = {
 
       useWorker: function () {
         let segments = [];
-        for (let i = 0; i < slider.value; i++) {
-          let segment = {
+        for (let i = 0; i < sliderInput.value; i++) {
+          const segment = {
             segmentTemp: this.temp[i] + this.unit,
             segmentTime: this.time[i].slice(-5),
           };
@@ -125,9 +124,10 @@ const weather = {
         log("Rendering segmetns");
         return ` 
         <div class="weather-header">
-          <h3>It's currently ${this.temp[0]}${
-          this.unit
-        }</h3>
+          <h3>It's currently 
+          ${this.temp[0]}
+          ${this.unit}
+          </h3>
         </div>
         <div class="weather-body">
           ${this.useWorker()
@@ -146,17 +146,18 @@ const weather = {
 
     weatherDiv.innerHTML = worker.showWorker();
 
-    slider.oninput = function () {
+    sliderInput.oninput = function () {
       weatherDiv.innerHTML = worker.showWorker();
-      output.innerHTML = slider.value;
+      daysOutput.innerHTML = sliderInput.value;
     };
 
     log("+ Render weather");
   },
 };
 
-output.innerHTML = slider.value;
-slider.oninput = () => (output.innerHTML = slider.value);
+daysOutput.innerHTML = sliderInput.value;
+sliderInput.oninput = () =>
+  (daysOutput.innerHTML = sliderInput.value);
 
 const updateDebounce = debounce((arg) => {
   weather.fetchCity(arg);
@@ -180,14 +181,19 @@ cityInput.addEventListener("input", (e) =>
 
 function saveToLocal(key, value) {
   log("Saveing to local: ", value, key);
-  const valueToSave = { ...value, timeSaved: Date.now() };
-  localStorage.setItem(key, JSON.stringify(valueToSave));
+  const timestampValue = {
+    ...value,
+    timeSaved: Date.now(),
+  };
+  localStorage.setItem(key, JSON.stringify(timestampValue));
 }
 
 function getFromLocal(key) {
   log("Getting from storage with key: ", key);
-  const fromLocal = JSON.parse(localStorage.getItem(key));
-  return fromLocal;
+  const dataFromLocal = JSON.parse(
+    localStorage.getItem(key)
+  );
+  return dataFromLocal;
 }
 
 function log(...args) {
