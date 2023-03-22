@@ -79,8 +79,8 @@ const weather = {
     );
     cityItems[0].classList.add("active");
 
-    for (let i = 0; i < cityItems.length; i++) {
-      cityItems[i].addEventListener("click", function () {
+    for (let item of cityItems) {
+      item.addEventListener("click", function () {
         weather.checkLocalStorage(
           this.dataset.lat,
           this.dataset.long,
