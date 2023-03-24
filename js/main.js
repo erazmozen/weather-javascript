@@ -3,6 +3,10 @@ const daysOutput = document.getElementById("slider-output");
 const cityInput = document.getElementById("city-input");
 const cityOutput = document.getElementById("city-output");
 
+daysOutput.innerHTML = sliderInput.value;
+sliderInput.oninput = () =>
+  (daysOutput.innerHTML = sliderInput.value);
+
 const weather = {
   fetchCity: async function (city) {
     if (city.length < 3)
@@ -107,7 +111,7 @@ const weather = {
       temp: data.hourly.temperature_2m,
       time: data.hourly.time,
 
-      useWorker: function () {
+      returnSegments: function () {
         let segments = [];
         for (let i = 0; i < sliderInput.value; i++) {
           const segment = {
@@ -120,7 +124,7 @@ const weather = {
         return segments;
       },
 
-      showWorker: function () {
+      renderSegments: function () {
         log("Rendering segmetns");
         return ` 
         <div class="weather-header">
@@ -130,7 +134,7 @@ const weather = {
           </h3>
         </div>
         <div class="weather-body">
-          ${this.useWorker()
+          ${this.returnSegments()
             .map(
               (segment) => `
                 <div>
@@ -144,20 +148,16 @@ const weather = {
       },
     };
 
-    weatherDiv.innerHTML = worker.showWorker();
+    weatherDiv.innerHTML = worker.renderSegments();
 
     sliderInput.oninput = function () {
-      weatherDiv.innerHTML = worker.showWorker();
+      weatherDiv.innerHTML = worker.renderSegments();
       daysOutput.innerHTML = sliderInput.value;
     };
 
     log("+ Render weather");
   },
 };
-
-daysOutput.innerHTML = sliderInput.value;
-sliderInput.oninput = () =>
-  (daysOutput.innerHTML = sliderInput.value);
 
 const updateDebounce = debounce((arg) => {
   weather.fetchCity(arg);
@@ -199,4 +199,5 @@ function getFromLocal(key) {
 function log(...args) {
   console.log(...args);
 }
-console.log("file ended");
+
+log("file ended");
