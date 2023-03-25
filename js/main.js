@@ -105,11 +105,18 @@ const weather = {
 
   showWeather: function (data) {
     const weatherDiv = document.querySelector(".weather");
+    const now = new Date().getHours();
 
     const worker = {
       unit: data.hourly_units.temperature_2m,
-      temp: data.hourly.temperature_2m,
-      time: data.hourly.time,
+      temp: data.hourly.temperature_2m.slice(
+        now,
+        now + sliderInput.value
+      ),
+      time: data.hourly.time.slice(
+        now,
+        now + sliderInput.value
+      ),
 
       returnSegments: function () {
         let segments = [];
